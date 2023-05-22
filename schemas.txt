@@ -1,0 +1,114 @@
+Schemas of the commonly found system tables under the `system` keyspace in Apache Cassandra:
+
+1. `system.local`:
+```cql
+CREATE TABLE system.local (
+    key text PRIMARY KEY,
+    bootstrapped text,
+    broadcast_address inet,
+    cluster_name text,
+    cql_version text,
+    data_center text,
+    gossip_generation int,
+    host_id uuid,
+    listen_address inet,
+    native_protocol_version text,
+    partitioner text,
+    rack text,
+    release_version text,
+    schema_version uuid,
+    thrift_version text,
+    tokens set<varchar>,
+    trift_version text
+);
+```
+
+2. `system.peers`:
+```cql
+CREATE TABLE system.peers (
+    peer inet PRIMARY KEY,
+    data_center text,
+    host_id uuid,
+    preferred_ip inet,
+    rack text,
+    release_version text,
+    rpc_address inet,
+    schema_version uuid,
+    tokens set<varchar>
+);
+```
+
+
+3. `system.size_estimates`:
+```cql
+CREATE TABLE system.size_estimates (
+    keyspace_name text,
+    table_name text,
+    range_start text,
+    range_end text,
+    mean_partition_size bigint,
+    partitions_count bigint,
+    PRIMARY KEY ((keyspace_name, table_name), range_start, range_end)
+);
+```
+
+4. `system.compaction_history`:
+```cql
+CREATE TABLE system.compaction_history (
+    id timeuuid PRIMARY KEY,
+    bytes_in bigint,
+    bytes_out bigint,
+    columnfamily_name text,
+    compacted_at timestamp,
+    keyspace_name text,
+    rows_merged map<int, bigint>,
+    rows_written bigint,
+    tombstones_scanned bigint,
+    ttl_expired bigint
+) WITH CLUSTERING ORDER BY (compacted_at DESC);
+```
+
+5. `system_schema.keyspaces`:
+```cql
+CREATE TABLE system_schema.keyspaces (
+    keyspace_name text PRIMARY KEY,
+    durable_writes boolean,
+    replication frozen<map<text, text>>,
+    flags frozen<set<text>>,
+    strategy_class text,
+    strategy_options frozen<map<text, text>>,
+    create_options frozen<map<text, text>>
+);
+```
+
+
+6. `system_schema.tables`:
+```cql
+CREATE TABLE system_schema.tables (
+    keyspace_name text,
+    table_name text,
+    bloom_filter_fp_chance double,
+    caching frozen<map<text, text>>,
+    cf_id uuid,
+    comment text,
+    compaction frozen<map<text, text>>,
+    compression frozen<map<text, text>>,
+    crc_check_chance double,
+    dclocal_read_repair_chance double,
+    default_time_to_live int,
+    extensions frozen<map<text, blob>>,
+    flags frozen<set<text>>,
+    gc_grace_seconds int,
+    id uuid PRIMARY KEY,
+    max_index_interval int,
+    memtable_flush_period_in_ms int,
+    min_index_interval int,
+    read_repair_chance double,
+    speculative_retry text,
+    subcompactions_per_core int,
+    type text,
+    PRIMARY KEY (keyspace_name, table_name)
+) WITH CLUSTERING ORDER BY (table_name ASC);
+```
+
+'''
